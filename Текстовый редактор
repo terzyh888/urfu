@@ -1,0 +1,21 @@
+commands = ['A', 'B', 'UNDO', 'C']
+
+text = ""
+undo_stack = []
+redo_stack = []
+
+for command in commands:
+    if command == 'UNDO':
+        if undo_stack:
+            redo_stack.append(text)
+            text = undo_stack.pop()
+    elif command == 'REDO':
+        if redo_stack:
+            undo_stack.append(text)
+            text = redo_stack.pop()
+    else:
+        undo_stack.append(text)
+        text += command
+        redo_stack.clear()
+
+print(text)

@@ -1,0 +1,24 @@
+print('Введите первую строку')
+string1 = input()
+print('Введите вторую строку')
+string2 = input()
+length1 = len(string1)
+length2 = len(string2)
+
+if length1 > length2:
+    length = length1
+else:
+    length = length2
+
+for i in range(length):
+    if i < len(string1):
+        char1 = string1[i]
+    else:
+        char1 = ' '
+
+    if i < len(string2):
+        char2 = string2[i]
+    else:
+        char2 = ' '
+
+    print(char1 + ' ' + char2)
