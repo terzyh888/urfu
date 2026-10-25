@@ -1,0 +1,68 @@
+<!doctype html>
+
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Эко-Раннер: Очищение реки</title>
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+  <main id="game">
+    <header class="header">
+      <div>
+        <p class="eyebrow">ЭКОЛОГИЧЕСКАЯ МИССИЯ</p>
+        <h1>Эко-Раннер</h1>
+        <p class="subtitle">Очисти реку — спаси природу!</p>
+      </div>
+      <div class="badge">🌿 ECO MODE</div>
+    </header>
+<section class="stats" aria-label="Статистика игры">
+  <div class="stat">
+    <span>ОЧКИ</span>
+    <strong id="score">0</strong>
+  </div>
+  <div class="stat combo-stat">
+    <span>КОМБО</span>
+    <strong id="combo">x1</strong>
+  </div>
+  <div class="stat">
+    <span>ЖИЗНИ</span>
+    <strong id="lives">❤️ ❤️ ❤️</strong>
+  </div>
+</section>
+<section class="game-frame">
+  <div id="game-world" class="game-world">
+    <div class="sun"></div>
+    <div class="bank bank-top"></div>
+    <div class="bank bank-bottom"></div>
+    <div class="river-line line-one"></div>
+    <div class="river-line line-two"></div>
+    <div class="river-line line-three"></div>
+    <div id="drone" class="drone" aria-label="Экологический дрон">
+      <span class="drone-propeller">✦</span>
+      <span class="drone-body">🛸</span>
+    </div>
+    <div id="objects"></div>
+    <div id="overlay" class="overlay">
+      <div class="overlay-card">
+        <div class="overlay-icon">🌊</div>
+        <h2 id="overlay-title">Спасём реку!</h2>
+        <p id="overlay-text">Собирай пластик и избегай токсичных отходов.</p>
+        <button id="start-button">Начать миссию</button>
+        <p class="hint">Управление: ↑ ↓ или W S</p>
+      </div>
+    </div>
+  </div>
+</section>
+<section class="bottom-panel">
+  <div class="legend">
+    <span><i class="plastic-icon">♻</i> Пластик: +10 очков</span>
+    <span><i class="toxic-icon">☣</i> Токсичные отходы: −1 жизнь</span>
+  </div>
+  <p id="message">Каждые 3 сбора подряд повышают множитель!</p>
+</section>
+  </main>
+  <script src="./script.js"></script>
+</body>
+</html>
