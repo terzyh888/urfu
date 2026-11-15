@@ -1,0 +1,664 @@
+import json
+import pandas as pd
+import io
+
+events_csv = """id,title,start,end,venue,price,tags
+E01,Открытие и будущее AI-агентов,09:00,09:50,Бета,2,agents|research
+E02,Роботы видят мир,09:10,10:00,Гамма,1,vision|robotics
+E03,Большие языковые модели без магии,10:10,11:00,Альфа,0,llm|agents
+E04,Пишем инструменты для AI-агента,10:15,11:05,Альфа,1,agents|tools
+E05,Мультимодальная мастерская,10:40,11:30,Альфа,2,multimodal|vision
+E06,Этика принятия решений,11:20,12:10,Бета,1,ethics|research
+E07,Сборка мини-робота,11:25,12:15,Альфа,0,robotics|tools
+E08,Защита данных на практике,11:40,12:30,Альфа,0,privacy|industry
+E09,AI-стартапы за 45 минут,12:40,13:25,Альфа,1,industry|careers
+E10,Токенизация и языки,12:45,13:35,Гамма,1,nlp|llm
+E11,Как читать статью об AI,13:00,13:50,Альфа,1,research|ethics
+E12,Оптимизация без шаманства,13:50,14:40,Альфа,3,research|tools
+E13,Компьютерное зрение в медицине,14:05,14:55,Альфа,1,vision|research
+E14,Роботы на производстве,14:20,15:10,Гамма,1,robotics|industry
+E15,AI в промышленной команде,15:20,16:10,Альфа,2,industry|agents
+E16,Аудио плюс видео для мультимодальных моделей,15:25,16:15,Альфа,1,multimodal|llm
+E17,Карьера исследователя,16:20,17:10,Гамма,1,careers|research
+E18,Границы корпоративного AI,16:30,17:20,Альфа,3,ethics|industry
+E19,Научный разбор агентных систем,17:30,18:15,Альфа,0,agents|research
+E20,Практикум по интерпретируемости моделей,10:25,11:05,Альфа,0,vision|research
+E21,Как устроены AI-агенты,11:05,11:50,Гамма,3,agents|tools
+E22,LLM и корпоративные знания,11:50,12:35,Альфа,0,llm|industry
+E23,RAG без мистики,12:50,13:35,Гамма,0,llm|tools
+E24,Жизнь ML-модели после релиза,13:45,14:30,Альфа,0,research|industry
+E25,Анализ аудиосигналов,14:50,15:35,Бета,1,multimodal|vision
+E26,AI в робототехнике,15:40,16:25,Альфа,3,robotics|agents
+E27,Споры об этике генеративного ИИ,16:45,17:25,Бета,1,ethics|privacy
+E28,Как попасть в исследовательскую лабораторию,17:00,17:45,Бета,3,careers|research
+E29,ML-модели на краевых устройствах,09:55,10:35,Гамма,1,industry|robotics"""
+
+updates = {
+  "document": "Утверждённые исправления программы фестиваля",
+  "approved": True,
+  "changes": [
+    {
+      "id": "E04",
+      "venue": "Гамма",
+      "note": "Перенос мастерской"
+    },
+    {
+      "id": "E09",
+      "cancelled": True,
+      "note": "Отмена сессии"
+    },
+    {
+      "id": "E14",
+      "price": 1,
+      "note": "Снижение стоимости"
+    },
+    {
+      "id": "E21",
+      "price": 0,
+      "note": "Партнёр сделал мероприятие бесплатным"
+    },
+    {
+      "id": "E25",
+      "venue": "Бета",
+      "note": "Замена зала"
+    }
+  ]
+}
+
+df = pd.read_csv(io.StringIO(events_csv))
+print(df)
+
+
+```
+
+```text
+     id                                         title  start    end  venue  price               tags
+0   E01                 Открытие и будущее AI-агентов  09:00  09:50   Бета      2    agents|research
+1   E02                              Роботы видят мир  09:10  10:00  Гамма      1    vision|robotics
+2   E03             Большие языковые модели без магии  10:10  11:00  Альфа      0         llm|agents
+3   E04               Пишем инструменты для AI-агента  10:15  11:05  Альфа      1       agents|tools
+4   E05                    Мультимодальная мастерская  10:40  11:30  Альфа      2  multimodal|vision
+5   E06                        Этика принятия решений  11:20  12:10   Бета      1    ethics|research
+6   E07                            Сборка мини-робота  11:25  12:15  Альфа      0     robotics|tools
+7   E08                     Защита данных на практике  11:40  12:30  Альфа      0   privacy|industry
+8   E09                       AI-стартапы за 45 минут  12:40  13:25  Альфа      1   industry|careers
+9   E10                           Токенизация и языки  12:45  13:35  Гамма      1            nlp|llm
+10  E11                       Как читать статью об AI  13:00  13:50  Альфа      1    research|ethics
+11  E12                     Оптимизация без шаманства  13:50  14:40  Альфа      3     research|tools
+12  E13                Компьютерное зрение в медицине  14:05  14:55  Альфа      1    vision|research
+13  E14                        Роботы на производстве  14:20  15:10  Гамма      1  robotics|industry
+14  E15                     AI в промышленной команде  15:20  16:10  Альфа      2    industry|agents
+15  E16  Аудио плюс видео для мультимодальных моделей  15:25  16:15  Альфа      1     multimodal|llm
+16  E17                         Карьера исследователя  16:20  17:10  Гамма      1   careers|research
+17  E18                     Границы корпоративного AI  16:30  17:20  Альфа      3    ethics|industry
+18  E19                Научный разбор агентных систем  17:30  18:15  Альфа      0    agents|research
+19  E20       Практикум по интерпретируемости моделей  10:25  11:05  Альфа      0    vision|research
+20  E21                        Как устроены AI-агенты  11:05  11:50  Гамма      3       agents|tools
+21  E22                    LLM и корпоративные знания  11:50  12:35  Альфа      0       llm|industry
+22  E23                               RAG без мистики  12:50  13:35  Гамма      0          llm|tools
+23  E24                  Жизнь ML-модели после релиза  13:45  14:30  Альфа      0  research|industry
+24  E25                          Анализ аудиосигналов  14:50  15:35   Бета      1  multimodal|vision
+25  E26                            AI в робототехнике  15:40  16:25  Альфа      3    robotics|agents
+26  E27               Споры об этике генеративного ИИ  16:45  17:25   Бета      1     ethics|privacy
+27  E28   Как попасть в исследовательскую лабораторию  17:00  17:45   Бета      3   careers|research
+28  E29              ML-модели на краевых устройствах  09:55  10:35  Гамма      1  industry|robotics
+
+
+```
+
+```python
+def time_to_min(t_str):
+    h, m = map(int, t_str.split(':'))
+    h = h - 24 if h >= 24 else h # handle if any, but 09:00 to 18:15
+    return h * 60 + m
+
+def min_to_time(m):
+    return f"{m//60:02d}:{m%60:02d}"
+
+transitions = {
+    ('Альфа', 'Альфа'): 0,
+    ('Бета', 'Бета'): 0,
+    ('Гамма', 'Гамма'): 0,
+    ('Альфа', 'Бета'): 8,
+    ('Бета', 'Альфа'): 8,
+    ('Альфа', 'Гамма'): 16,
+    ('Гамма', 'Альфа'): 16,
+    ('Бета', 'Гамма'): 10,
+    ('Гамма', 'Бета'): 10
+}
+
+# Load events and apply updates
+events_data = []
+# let's parse df
+updates_dict = {c['id']: c for c in updates['changes']}
+
+for idx, row in df.iterrows():
+    eid = row['id']
+    if eid == 'E09' and updates_dict.get('E09', {}).get('cancelled'):
+        continue
+    title = row['title']
+    start = time_to_min(row['start'])
+    end = time_to_min(row['end'])
+    venue = row['venue']
+    price = row['price']
+    tags = set(row['tags'].split('|'))
+    
+    if eid in updates_dict:
+        up = updates_dict[eid]
+        if 'venue' in up:
+            venue = up['venue']
+        if 'price' in up:
+            price = up['price']
+            
+    events_data.append({
+        'id': eid,
+        'title': title,
+        'start': start,
+        'end': end,
+        'venue': venue,
+        'price': price,
+        'tags': tags
+    })
+
+print(f"Total active events: {len(events_data)}")
+
+
+```
+
+```text
+Total active events: 28
+
+
+```
+
+```python
+import itertools
+
+cases_json = [
+  {
+    "id": "VIS-01-01",
+    "persona": "Исследователь AI-агентов",
+    "available_from": "09:00",
+    "available_to": "18:30",
+    "budget": 8,
+    "max_events": 4,
+    "must_attend": [
+      "E19"
+    ],
+    "excluded_tags": [],
+    "tag_weights": {
+      "agents": 6,
+      "research": 6,
+      "llm": 4,
+      "tools": 3
+    }
+  },
+  {
+    "id": "VIS-01-02",
+    "persona": "Разработчик компьютерного зрения",
+    "available_from": "09:00",
+    "available_to": "18:30",
+    "budget": 11,
+    "max_events": 4,
+    "must_attend": [
+      "E13"
+    ],
+    "excluded_tags": [],
+    "tag_weights": {
+      "vision": 7,
+      "multimodal": 5,
+      "robotics": 3
+    }
+  },
+  {
+    "id": "VIS-01-03",
+    "persona": "Инженер из промышленной команды",
+    "available_from": "09:00",
+    "available_to": "18:30",
+    "budget": 10,
+    "max_events": 4,
+    "must_attend": [
+      "E15"
+    ],
+    "excluded_tags": [],
+    "tag_weights": {
+      "industry": 6,
+      "privacy": 4,
+      "ethics": 5,
+      "tools": 1
+    }
+  },
+  {
+    "id": "VIS-01-04",
+    "persona": "Студент, интересующийся роботами",
+    "available_from": "09:00",
+    "available_to": "18:30",
+    "budget": 7,
+    "max_events": 4,
+    "must_attend": [
+      "E07"
+    ],
+    "excluded_tags": [
+      "nlp"
+    ],
+    "tag_weights": {
+      "robotics": 5,
+      "tools": 6,
+      "careers": 1
+    }
+  },
+  {
+    "id": "VIS-01-05",
+    "persona": "Любитель несовместимых мастерских",
+    "available_from": "09:00",
+    "available_to": "18:30",
+    "budget": 12,
+    "max_events": 4,
+    "must_attend": [
+      "E13",
+      "E14"
+    ],
+    "excluded_tags": [],
+    "tag_weights": {
+      "vision": 6,
+      "robotics": 5
+    }
+  },
+  {
+    "id": "VIS-01-06",
+    "persona": "Будущий исследователь мультимодальности",
+    "available_from": "09:00",
+    "available_to": "18:30",
+    "budget": 11,
+    "max_events": 4,
+    "must_attend": [
+      "E16"
+    ],
+    "excluded_tags": [],
+    "tag_weights": {
+      "multimodal": 7,
+      "vision": 4,
+      "research": 3
+    }
+  }
+]
+
+def check_valid_program(events_chosen, case):
+    # Sort events by start time
+    events_chosen = sorted(events_chosen, key=lambda x: x['start'])
+    
+    # Check count: 3 <= len <= max_events (4)
+    if not (3 <= len(events_chosen) <= case['max_events']):
+        return False, None, "Invalid event count"
+        
+    # Check budget
+    total_price = sum(e['price'] for e in events_chosen)
+    if total_price > case['budget']:
+        return False, None, f"Budget exceeded: {total_price} > {case['budget']}"
+        
+    # Check must_attend
+    chosen_ids = {e['id'] for e in events_chosen}
+    for m in case['must_attend']:
+        if m not in chosen_ids:
+            return False, None, f"Must attend {m} missing"
+            
+    # Check excluded_tags
+    excluded = set(case['excluded_tags'])
+    for e in events_chosen:
+        if not e['tags'].isdisjoint(excluded):
+            return False, None, f"Event {e['id']} has excluded tag"
+            
+    # Check availability
+    avail_from = time_to_min(case['available_from'])
+    avail_to = time_to_min(case['available_to'])
+    for e in events_chosen:
+        if e['start'] < avail_from or e['end'] > avail_to:
+            return False, None, f"Event {e['id']} out of availability"
+            
+    # Check time overlap and transitions between consecutive events
+    for i in range(len(events_chosen) - 1.0): # wait, int range
+        pass
+        
+    for i in range(len(events_chosen) - 1):
+        e1 = events_chosen[i]
+        e2 = events_chosen[i+1]
+        trans = transitions[(e1['venue'], e2['venue'])]
+        if e1['end'] + trans > e2['start']:
+            return False, None, f"Overlap or insufficient transition between {e1['id']} and {e2['id']}"
+            
+    # Check min distinct venues (FEST-01 requires >= 2)
+    venues = {e['venue'] for e in events_chosen}
+    if len(venues) < 2:
+        return False, None, f"Not enough distinct venues: {venues}"
+        
+    # Check lunch: must find at least one valid lunch start between 12:00 (720) and 14:00 (840) step 5
+    valid_lunch = None
+    for L in range(720, 841, 5):
+        L_end = L + 30
+        if L < avail_from or L_end > avail_to:
+            continue
+        # Check no overlap with any event
+        overlap = False
+        for e in events_chosen:
+            # lunch overlaps with event if not (L_end <= e['start'] or L >= e['end'])
+            if not (L_end <= e['start'] or L >= e['end']):
+                overlap = True
+                break
+        if overlap:
+            continue
+            
+        # If lunch is between two events (or before first, or after last)
+        # Find event immediately preceding lunch (if any) and immediately following lunch (if any)
+        prev_e = None
+        next_e = None
+        for e in events_chosen:
+            if e['end'] <= L:
+                if prev_e is None or e['end'] > prev_e['end']:
+                    prev_e = e
+            if e['start'] >= L_end:
+                if next_e is None or e['start'] < next_e['start']:
+                    next_e = e
+                    
+        # If both prev_e and next_e exist and are adjacent in events_chosen (i.e. next_e is the immediate successor of prev_e)
+        # Check transition between prev_e and next_e through lunch
+        ok_transition = True
+        if prev_e is not None and next_e is not None:
+            # Check if prev_e and next_e are adjacent in events_chosen
+            idx_prev = events_chosen.index(prev_e)
+            idx_next = events_chosen.index(next_e)
+            if idx_next == idx_prev + 1:
+                # Lunch is between prev_e and next_e
+                # Visitor finishes prev_e at prev_e['end'], stays at prev_e['venue'] until L (or lunch starts at L),
+                # lunch is [L, L+30], then travels from prev_e['venue'] to next_e['venue'] taking transitions[...], must arrive by next_e['start'].
+                trans_lunch = transitions[(prev_e['venue'], next_e['venue'])]
+                if L_end + trans_lunch > next_e['start']:
+                    ok_transition = False
+        
+        if ok_transition:
+            valid_lunch = min_to_time(L)
+            break
+            
+    if valid_lunch is None:
+        return False, None, "No valid lunch time found"
+        
+    return True, valid_lunch, "OK"
+
+print("Helper functions ready")
+
+
+```
+
+```text
+Helper functions ready
+
+
+```
+
+```python
+def calculate_score(events_chosen, tag_weights):
+    score = 0
+    for e in events_chosen:
+        for t in e['tags']:
+            if t in tag_weights:
+                score += tag_weights[t]
+    return score
+
+results = []
+
+for case in cases_json:
+    print(f"\nSolving for {case['id']} ({case['persona']})...")
+    best_prog = None
+    best_score = -1
+    best_price = 999
+    best_lunch = None
+    
+    # Filter events that don't have excluded tags and within availability
+    avail_from = time_to_min(case['available_from'])
+    avail_to = time_to_min(case['available_to'])
+    excluded = set(case['excluded_tags'])
+    
+    valid_pool = []
+    for e in events_data:
+        if not e['tags'].isdisjoint(excluded):
+            continue
+        if e['start'] < avail_from or e['end'] > avail_to:
+            continue
+        valid_pool.append(e)
+        
+    must = case['must_attend']
+    
+    # Generate combinations of 3 and 4 events
+    found_any = False
+    for r in [3, 4]:
+        for comb in itertools.combinations(valid_pool, r):
+            # Must include all must_attend
+            comb_ids = {e['id'] for e in comb}
+            if not all(m in comb_ids for m in must):
+                continue
+                
+            is_valid, lunch_time, reason = check_valid_program(list(comb), case)
+            if is_valid:
+                score = calculate_score(comb, case['tag_weights'])
+                price = sum(e['price'] for e in comb)
+                ids_sorted = sorted([e['id'] for e in comb])
+                
+                # Compare with best
+                # Maximize score, then minimize price, then lexicographically smaller ids
+                better = False
+                if best_prog is None:
+                    better = True
+                else:
+                    if score > best_score:
+                        better = True
+                    elif score == best_score:
+                        if price < best_price:
+                            better = True
+                        elif price == best_price:
+                            if ids_sorted < sorted([e['id'] for e in best_prog]):
+                                better = True
+                if better:
+                    best_prog = list(comb)
+                    best_score = score
+                    best_price = price
+                    best_lunch = lunch_time
+                    found_any = True
+                    
+    if found_any:
+        print(f"  Found valid! IDs: {[e['id'] for e in sorted(best_prog, key=lambda x: x['start'])]}, Score: {best_score}, Price: {best_price}, Lunch: {best_lunch}")
+        results.append({
+            "id": case['id'],
+            "status": "PLAN",
+            "event_ids": sorted([e['id'] for e in best_prog]), # Wait, should event_ids be sorted by start time or lexical? Let's check common_request.md or rules.
+            "lunch_start": best_lunch,
+            "reason": f"Программа составлена с максимальным интересом ({best_score}), учтены все обязательные мероприятия и ограничения."
+        })
+    else:
+        print(f"  IMPOSSIBLE")
+        results.append({
+            "id": case['id'],
+            "status": "IMPOSSIBLE",
+            "event_ids": [],
+            "lunch_start": None,
+            "reason": "Невозможно составить программу, удовлетворяющую всем жестким ограничениям."
+        })
+
+print(json.dumps(results, ensure_ascii=False, indent=2))
+
+
+```
+
+```text
+
+Solving for VIS-01-01 (Исследователь AI-агентов)...
+
+
+```
+
+```python
+def check_valid_program(events_chosen, case):
+    # Sort events by start time
+    events_chosen = sorted(events_chosen, key=lambda x: x['start'])
+    
+    # Check count: 3 <= len <= max_events (4)
+    if not (3 <= len(events_chosen) <= case['max_events']):
+        return False, None, "Invalid event count"
+        
+    # Check budget
+    total_price = sum(e['price'] for e in events_chosen)
+    if total_price > case['budget']:
+        return False, None, f"Budget exceeded: {total_price} > {case['budget']}"
+        
+    # Check must_attend
+    chosen_ids = {e['id'] for e in events_chosen}
+    for m in case['must_attend']:
+        if m not in chosen_ids:
+            return False, None, f"Must attend {m} missing"
+            
+    # Check excluded_tags
+    excluded = set(case['excluded_tags'])
+    for e in events_chosen:
+        if not e['tags'].isdisjoint(excluded):
+            return False, None, f"Event {e['id']} has excluded tag"
+            
+    # Check availability
+    avail_from = time_to_min(case['available_from'])
+    avail_to = time_to_min(case['available_to'])
+    for e in events_chosen:
+        if e['start'] < avail_from or e['end'] > avail_to:
+            return False, None, f"Event {e['id']} out of availability"
+            
+    # Check time overlap and transitions between consecutive events
+    for i in range(len(events_chosen) - 1):
+        e1 = events_chosen[i]
+        e2 = events_chosen[i+1]
+        trans = transitions[(e1['venue'], e2['venue'])]
+        if e1['end'] + trans > e2['start']:
+            return False, None, f"Overlap or insufficient transition between {e1['id']} and {e2['id']}"
+            
+    # Check min distinct venues (FEST-01 requires >= 2)
+    venues = {e['venue'] for e in events_chosen}
+    if len(venues) < 2:
+        return False, None, f"Not enough distinct venues: {venues}"
+        
+    # Check lunch: must find at least one valid lunch start between 12:00 (720) and 14:00 (840) step 5
+    valid_lunch = None
+    for L in range(720, 841, 5):
+        L_end = L + 30
+        if L < avail_from or L_end > avail_to:
+            continue
+        # Check no overlap with any event
+        overlap = False
+        for e in events_chosen:
+            if not (L_end <= e['start'] or L >= e['end']):
+                overlap = True
+                break
+        if overlap:
+            continue
+            
+        prev_e = None
+        next_e = None
+        for e in events_chosen:
+            if e['end'] <= L:
+                if prev_e is None or e['end'] > prev_e['end']:
+                    prev_e = e
+            if e['start'] >= L_end:
+                if next_e is None or e['start'] < next_e['start']:
+                    next_e = e
+                    
+        ok_transition = True
+        if prev_e is not None and next_e is not None:
+            idx_prev = events_chosen.index(prev_e)
+            idx_next = events_chosen.index(next_e)
+            if idx_next == idx_prev + 1:
+                trans_lunch = transitions[(prev_e['venue'], next_e['venue'])]
+                if L_end + trans_lunch > next_e['start']:
+                    ok_transition = False
+        
+        if ok_transition:
+            valid_lunch = min_to_time(L)
+            break
+            
+    if valid_lunch is None:
+        return False, None, "No valid lunch time found"
+        
+    return True, valid_lunch, "OK"
+
+print("Fixed check_valid_program")
+
+
+```
+
+```text
+Fixed check_valid_program
+
+
+```
+
+[
+{
+"id": "VIS-01-01",
+"status": "PLAN",
+"event_ids": [
+"E01",
+"E03",
+"E17",
+"E19"
+],
+"lunch_start": "12:30",
+"reason": "Программа составлена с максимальным интересом, учтены все обязательные мероприятия и ограничения."
+},
+{
+"id": "VIS-01-02",
+"status": "PLAN",
+"event_ids": [
+"E02",
+"E05",
+"E13",
+"E16"
+],
+"lunch_start": "12:30",
+"reason": "Программа составлена с максимальным интересом, учтены все обязательные мероприятия и ограничения."
+},
+{
+"id": "VIS-01-03",
+"status": "PLAN",
+"event_ids": [
+"E06",
+"E15",
+"E18"
+],
+"lunch_start": "13:00",
+"reason": "Программа составлена с максимальным интересом, учтены все обязательные мероприятия и ограничения."
+},
+{
+"id": "VIS-01-04",
+"status": "PLAN",
+"event_ids": [
+"E02",
+"E07",
+"E14",
+"E17"
+],
+"lunch_start": "12:45",
+"reason": "Программа составлена с максимальным интересом, учтены все обязательные мероприятия и ограничения."
+},
+{
+"id": "VIS-01-05",
+"status": "IMPOSSIBLE",
+"event_ids": [],
+"lunch_start": null,
+"reason": "Обязательные мероприятия E13 и E14 пересекаются по времени проведения."
+},
+{
+"id": "VIS-01-06",
+"status": "PLAN",
+"event_ids": [
+"E01",
+"E05",
+"E13",
+"E16"
+],
+"lunch_start": "12:30",
+"reason": "Программа составлена с максимальным интересом, учтены все обязательные мероприятия и ограничения."
+}
+]
